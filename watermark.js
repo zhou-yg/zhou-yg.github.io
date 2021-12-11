@@ -5,7 +5,7 @@ const resultImg = document.querySelector('#result');
 const canvas = document.querySelector('#canvas');
 const ctx = canvas.getContext('2d');
 
-let inputedMarkText = '';
+let inputedMarkText = '123';
 let selectedImgDOM = null;
 
 markText.addEventListener('input', e => {
@@ -38,7 +38,8 @@ selectFile.addEventListener('change', (e) => {
 });
 
 function renderTextToCanvas() {
-  const fontSize = 48;
+  const fontSize = 96;
+  const pd = 24;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   setTimeout(() => {
     if (selectedImgDOM) {
@@ -49,20 +50,25 @@ function renderTextToCanvas() {
       const gridWidthSize = canvas.width / fontSize;
       const textSize = inputedMarkText.length;
   
-      const columns = Math.ceil(gridWidthSize / (textSize + 2));
-      const rows = canvas.height / fontSize / 2;
+      const columns = Math.ceil(gridWidthSize / (textSize)) + 5;
+      const rows = canvas.height / fontSize;
   
+      ctx.save();
       ctx.globalAlpha = 0.2;
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(-45 * Math.PI / 180)
+      ctx.translate(-canvas.width / 2, -canvas.height / 2);
       ctx.font = `${fontSize}px serif`;
   
       for(let i = 0; i < rows;i++) {
         for(let j = 0; j < columns; j++) {
-          const x = fontSize + (textSize * fontSize + fontSize) * j;
-          const y = fontSize * 2 * (i + 1);
+          const x = pd + fontSize * (textSize - 1) * j - fontSize * textSize;
+          const y = pd * 2 + fontSize * i * 1.5;
+          
           ctx.fillText(inputedMarkText, x, y);
         }
       }
-      ctx.globalAlpha = 1;
+      ctx.restore();
     }
 
     if (selectedImgDOM || inputedMarkText) {
