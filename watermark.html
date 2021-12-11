@@ -10,9 +10,14 @@
       margin: 0;
       padding: 0;
     }
+    #result {
+      background-color: #f0f0f0;
+    }
     .canvas {
       background-color: #f0f0f0;
       width: 100vw;
+      position: absolute;
+      left: 1000vw;
     }
   </style>
 </head>
@@ -24,9 +29,13 @@
     <br />
     输入水印文字：<input id="markText"/>
     <br />
+    <br />
+    <button id="saveImg">保存图片</button>
+    <br />
   </div>
   <br />
-  <canvas id="canvas" class="canvas" width="1200" height="800">
+  <img id="result" />
+  <canvas id="canvas" class="canvas" >
   </canvas>
 </body>
 <script src="./watermark.js"></script>
