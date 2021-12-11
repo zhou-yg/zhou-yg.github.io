@@ -22,6 +22,8 @@ selectFile.addEventListener('change', (e) => {
     const img = new Image();
     img.src = e.target.result;
     img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
       selectedImgDOM = img;
       renderTextToCanvas();
     };
