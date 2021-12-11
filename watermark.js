@@ -73,8 +73,6 @@ function renderTextToCanvas() {
 
     if (selectedImgDOM || inputedMarkText) {
       const r = canvas.toDataURL('image/png');
-      resultImg.width = canvas.width
-      resultImg.height = canvas.height
       resultImg.src = r;
     }
     
