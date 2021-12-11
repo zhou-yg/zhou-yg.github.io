@@ -5,7 +5,7 @@ const resultImg = document.querySelector('#result');
 const canvas = document.querySelector('#canvas');
 const ctx = canvas.getContext('2d');
 
-let inputedMarkText = '123';
+let inputedMarkText = '我是水印';
 let selectedImgDOM = null;
 
 markText.addEventListener('input', e => {
