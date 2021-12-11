@@ -6,7 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
   <title>水印工具 V1</title>
   <style>
-    body, html {
+    html {
+      width: 100vw;
+      height: 100%;
+      overflow: hidden;
+    }
+    body {
       margin: 0;
       padding: 0;
     }
@@ -19,6 +24,11 @@
       position: absolute;
       left: 1000vw;
     }
+    .img-box {
+      background-color: #f0f0f0;
+      width: 100%;
+      min-height: 400px;
+    }
   </style>
 </head>
 <body>
@@ -30,11 +40,11 @@
     输入水印文字：<input id="markText"/>
     <br />
     <br />
-    <button id="saveImg">保存图片</button>
-    <br />
   </div>
   <br />
-  <img id="result" />
+  <div class="img-box">
+    <img id="result" width="100%"/>
+  </div>
   <canvas id="canvas" class="canvas" >
   </canvas>
 </body>
