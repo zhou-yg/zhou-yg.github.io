@@ -1,0 +1,79 @@
+import ejs from '../deps/ejs.js'
+import config from './config.mjs'
+import * as path from 'path'
+import * as fs from 'fs'
+import { fileURLToPath } from 'url'
+import MD from '../deps/markdown-it.mjs'
+
+const md = new MD()
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+const mdTemp = fs.readFileSync(path.join(__dirname, './ejs/md-phase.ejs')).toString()
+const htmlTemp = fs.readFileSync(path.join(__dirname, './ejs/template-index.ejs')).toString()
+const navTemp = fs.readFileSync(path.join(__dirname, './ejs/nav.ejs')).toString()
+
+const mdsDir = config.entry.dir
+const outputDir = config.output.dir
+const dirs = fs.readdirSync(mdsDir)
+
+function readFileTree (root, m) {
+  const isDir = fs.lstatSync(root).isDirectory()
+  if (isDir) {
+    const files = fs.readdirSync(root)
+    files.forEach(f => {
+      const p = path.join(root, f)
+      const isDir = fs.lstatSync(p).isDirectory()
+      if (isDir) {
+        readFileTree(p, m)
+      } else if (/\.md$/.test(p)) {
+        m.set(p, {
+          getContent: () => fs.readFileSync(p).toString()
+        })
+      }
+    })  
+  } else {
+    m.set(root, {
+      getContent: () => fs.readFileSync(root).toString()
+    })
+  }
+}
+
+const navNames = dirs.map(d => d.replace(/\.md$/, '')).map(name => name)
+
+const navHTML = ejs.render(navTemp, { names: navNames })
+
+dirs.forEach(root => {
+  const fileList = new Map()
+  readFileTree(path.join(mdsDir, root), fileList)
+  
+  const arr = []
+  const arrWithoutIndex = []
+  for (const f of fileList) {
+    const content = f[1].getContent()
+    if (content) {
+      const html = md.render(content)
+      let index = f[0].match(/^\[(\d+)\]/)
+      if (index) {
+        index = parseInt(index[1], 10)
+        arr[index] = {
+          html,
+        }
+      } else {
+        arrWithoutIndex.push({
+          html,
+        })
+      }
+    }
+  }
+  const final = arr.reverse().concat(arrWithoutIndex).filter(Boolean).map(v => {
+    return ejs.render(mdTemp, { md: v.html })
+  }).join('\n')
+
+  const finalHtml = ejs.render(htmlTemp, {
+    htmls: final,
+    nav: navHTML
+  })
+
+  fs.writeFileSync(path.join(outputDir, `${root.replace(/\.md$/, '')}.html`), finalHtml)
+})

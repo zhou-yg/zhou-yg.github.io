@@ -1,0 +1,19 @@
+{
+  "name": "what",
+  "version": "1.0.0",
+  "description": "我不知道在说什么",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "server": "http-server ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhou-yg/zhou-yg.github.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhou-yg/zhou-yg.github.io/issues"
+  },
+  "homepage": "https://github.com/zhou-yg/zhou-yg.github.io#readme"
+}
