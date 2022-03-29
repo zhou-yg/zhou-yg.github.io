@@ -63,7 +63,6 @@ dirs.forEach(root => {
     if (content) {
       const html = md.render(content)
       let index = f[0].match(/\[(\d+)\]/)
-      console.log('index: ', index);
       const name = last(f[0].split('/').filter(Boolean))
       if (index) {
         index = parseInt(index[1], 10)

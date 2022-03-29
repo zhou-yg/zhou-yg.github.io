@@ -9,9 +9,12 @@ header {
   font-size: 18px;
   display:flex;
   align-items: center;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
+}
+header .slogan {
+  color: #333;
 }
 header img {
   margin-right: 10px;
@@ -59,7 +62,7 @@ main {
 article {
   background-color: #fff;
   padding: 30px 44px 40px;
-  color: #55626d;
+  color: #262626;
   margin: 0 0 45px;
   font-size: 20px;
   border-radius: 4px;
@@ -68,6 +71,9 @@ article {
 article img {
   margin: 24px;
   width: 80%;
+}
+article p {
+  line-height: 1.4em;
 }
 .mark {
   color: #fff;
@@ -80,7 +86,7 @@ article h2,
 article h3
 {
   margin: 20px 0 8px;
-  color: #383f49;
+  color: #141414;
 }
 
 article h1 {
