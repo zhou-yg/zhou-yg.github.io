@@ -82,3 +82,5 @@ dirs.forEach(root => {
 
   fs.writeFileSync(path.join(outputDir, `${root.replace(/\.md$/, '')}.html`), finalHtml)
 })
+
+console.log('build html done')
