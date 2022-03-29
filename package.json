@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/zhou-yg/zhou-yg.github.io/issues"
   },
-  "homepage": "https://github.com/zhou-yg/zhou-yg.github.io#readme"
+  "homepage": "https://github.com/zhou-yg/zhou-yg.github.io#readme",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
 }
