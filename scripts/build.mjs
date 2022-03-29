@@ -79,11 +79,14 @@ dirs.forEach(root => {
     }
   }
   const final = arr.reverse().concat(arrWithoutIndex).filter(Boolean).map(v => {
+    const final2 = v.html.replace(/<a /g, '<span class="inner-link"').replace(/a>/, 'span>')
+
     return ejs.render(mdTemp, {
-      md: v.html,
+      md: final2,
       hash: encodeURIComponent(v.index)
     })
   }).join('\n')
+
 
   const finalHtml = ejs.render(htmlTemp, {
     htmls: final,

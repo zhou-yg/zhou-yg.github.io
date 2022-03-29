@@ -68,6 +68,9 @@ article {
   border-radius: 4px;
   position: relative;
 }
+article blockquote {
+  color: #999;
+}
 article img {
   margin: 24px;
   width: 80%;
