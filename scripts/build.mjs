@@ -39,9 +39,14 @@ function readFileTree (root, m) {
   }
 }
 
-const navNames = dirs.map(d => d.replace(/\.md$/, '')).map(name => name)
+const navNames = Object.entries(config.nameMap).map(([k, v]) => ({
+  name: k,
+  cn: v
+}))
 
-const navHTML = ejs.render(navTemp, { names: navNames })
+const navHTML = ejs.render(navTemp, {
+  names: navNames
+})
 
 dirs.forEach(root => {
   const fileList = new Map()

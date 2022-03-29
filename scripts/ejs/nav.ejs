@@ -1,5 +1,8 @@
 <header>
-  <% names.forEach(name => { %>
-    <a href="./<%= name %>.html" ><%= name %></a>
+
+  <img src="./logo.jpg" alt="logo" />
+
+  <% names.forEach((o) => { %>
+    <a href="./<%= o.name %>.html" ><%= o.cn %></a>
   <% }) %>
 </header>
