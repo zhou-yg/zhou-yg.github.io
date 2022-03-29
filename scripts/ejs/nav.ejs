@@ -2,7 +2,10 @@
 
   <img src="./logo.jpg" alt="logo" />
 
-  <% names.forEach((o) => { %>
-    <a href="./<%= o.name %>.html" ><%= o.cn %></a>
-  <% }) %>
+  <div class="navs">
+    <% names.forEach((o) => { %>
+      <a href="./<%= o.name %>.html" ><%= o.cn %></a>
+    <% }) %>  
+  </div>
+
 </header>
