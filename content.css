@@ -48,32 +48,49 @@ main {
   }
 }
 
+.a-link {
+  text-decoration: none;
+}
+
+.a-link:visited article .mark {
+  color: #7cb305;
+}
+
 article {
-  box-sizing: border-box;
   background-color: #fff;
-  padding: 30px 44px;
-  width: 100%;
+  padding: 30px 44px 40px;
   color: #55626d;
-  margin: 0 0 30px;
-  font-size:20px;
+  margin: 0 0 45px;
+  font-size: 20px;
   border-radius: 4px;
+  position: relative;
+}
+article img {
+  margin: 24px;
+  width: 80%;
+}
+.mark {
+  color: #fff;
+  position: absolute;
+  top: 16px;
+  right: 16px;
 }
 article h1,
 article h2,
 article h3
 {
-  margin: 0 0 20px;
+  margin: 20px 0 8px;
   color: #383f49;
 }
 
 article h1 {
-  font-size: 54px;
-}
-article h2 {
   font-size: 40px;
 }
+article h2 {
+  font-size: 28px;
+}
 article h3 {
-  font-size: 26px;
+  font-size: 22px;
 }
 
 /* reset */

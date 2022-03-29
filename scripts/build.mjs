@@ -48,6 +48,10 @@ const navHTML = ejs.render(navTemp, {
   names: navNames
 })
 
+function last (arr = []) {
+  return arr[arr.length - 1]
+}
+
 dirs.forEach(root => {
   const fileList = new Map()
   readFileTree(path.join(mdsDir, root), fileList)
@@ -58,21 +62,28 @@ dirs.forEach(root => {
     const content = f[1].getContent()
     if (content) {
       const html = md.render(content)
-      let index = f[0].match(/^\[(\d+)\]/)
+      let index = f[0].match(/\[(\d+)\]/)
+      console.log('index: ', index);
+      const name = last(f[0].split('/').filter(Boolean))
       if (index) {
         index = parseInt(index[1], 10)
         arr[index] = {
+          index,
           html,
         }
       } else {
         arrWithoutIndex.push({
+          index: name,
           html,
         })
       }
     }
   }
   const final = arr.reverse().concat(arrWithoutIndex).filter(Boolean).map(v => {
-    return ejs.render(mdTemp, { md: v.html })
+    return ejs.render(mdTemp, {
+      md: v.html,
+      hash: encodeURIComponent(v.index)
+    })
   }).join('\n')
 
   const finalHtml = ejs.render(htmlTemp, {
