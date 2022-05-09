@@ -25,7 +25,52 @@
 
   <main>
 
-    <a class="a-link" href="#t11" name="t11" >
+    <a class="a-link" href="#t12" name="t12" >
+  <article>
+    <div class="markdown-body">
+      <h1>chrome &amp; v8源码探路</h1>
+<p>2021-05-09</p>
+<blockquote>
+<p>冷知识：chromium的源码虽然也是git，但是托管在自建服务上的</p>
+</blockquote>
+<p>代码仓库：&lt;br /&gt;<span class="inner-link"href="https://chromium.googlesource.com/chromium/src.git/">https://chromium.googlesource.com/chromium/src.git/</span></p>
+<p>代码阅读器：<span class="inner-link"href="https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/clipboard/;bpv=0;bpt=0">https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/clipboard/;bpv=0;bpt=0</a></p>
+<p>需要学一点C++才能看得清楚明白</p>
+<h2>目录结构</h2>
+<ol>
+<li><span class="inner-link"href="https://chromium.googlesource.com/chromium/src.git/+/refs/heads/main/third_party/">third_party/</a> 第三方
+<ol>
+<li>blink/ 排版渲染引擎（之前是webkit）</li>
+</ol>
+</li>
+<li>v8/ 外链到v8自己的目录</li>
+</ol>
+<p>v8是js的runtime，但是在浏览器有很多的API，如DOM，fetch等其实并不在v8里面，这些代码大部分在blink里</p>
+<p>如 navigator.clipboard相关方法就在</p>
+<p><span class="inner-link"href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/modules/clipboard/clipboard_promise.h">https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/modules/clipboard/clipboard_promise.h</a></p>
+<h2>阅读姿势</h2>
+<ul>
+<li>了解整体的生命周期
+<ul>
+<li>功能模块的职责</li>
+<li>功能模块的之间的调用机制和调用关系</li>
+</ul>
+</li>
+<li>针对具体功能再看具体代码
+<ul>
+<li>要区分多平台</li>
+</ul>
+</li>
+</ul>
+<p>（to be continued）</p>
+
+    </div>
+  
+    <div class="mark">Y</div>
+
+  </article>
+</a>
+<a class="a-link" href="#t11" name="t11" >
   <article>
     <div class="markdown-body">
       <h1>自身编码的极限</h1>
