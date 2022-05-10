@@ -3,9 +3,11 @@
 
 > 冷知识：chromium的源码虽然也是git，但是托管在自建服务上的
 
-代码仓库：<br />[https://chromium.googlesource.com/chromium/src.git/](https://chromium.googlesource.com/chromium/src.git/)
+代码仓库：
+[https://chromium.googlesource.com/chromium/src.git/](https://chromium.googlesource.com/chromium/src.git/)
 
-代码阅读器：[https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/clipboard/;bpv=0;bpt=0](https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/clipboard/;bpv=0;bpt=0)
+代码阅读器：
+[https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/clipboard/;bpv=0;bpt=0](https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/clipboard/;bpv=0;bpt=0)
 
 需要学一点C++才能看得清楚明白
 ## 目录结构 
