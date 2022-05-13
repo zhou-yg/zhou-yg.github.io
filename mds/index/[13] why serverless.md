@@ -80,15 +80,17 @@ Update，Remove，Create怎么解？
       - before, after
 ```javascript
 // V1
+// V1
 const serverlessUnit = {
   context: {
     a; new State(),
     b: new Cache()
     c: new Model('Entity')
   },
-  methods: {
-    init () {
-    },
+  init () {
+    // init body
+  },
+  inputCompute: {
     inputCompute (arg) {
       const deps = init(contextDraft)
       // middle state ?
@@ -111,12 +113,12 @@ function serverlessUnit () {
   const b = useCache()
   const c = useModel('Entity')
   
-  const d = computed(() => a.x + b.x)
+  const d = computed(() => a().x + b().x)
   
-  // must receive a parameter
+  // must receive a parameter，有语义的合集
   // reducer的既视感
-  const inputCompute = useCompute(async (parameter) => {
-    // do something with a,b,c; a,b,c is draft in here
+  const inputCompute = useInputCompute(async (parameter) => {
+    // do something with draft：a,b,c
     
     // progress ? no 只有0，1的2种状态
     
