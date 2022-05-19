@@ -39,7 +39,8 @@
 <li>为什么Dispatcher要分成 HooksDispatcherOnMount 和  HooksDispatcherOnUpdate 2类？</li>
 <li>useState的计算的时机为什么是下次更新的时候才Merge ？</li>
 </ul>
-<p>以useReducer为例，hooks的源码出处：</p>
+<p>以useReducer为例，hooks的源码出处：
+<span class="inner-link"href="https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactFiberHooks.new.js">ReactFiberHooks.new.js</span></p>
 <h2>基本原理说明</h2>
 <p>在Hooks实现里最重要的事情，就是useState和useEffect之类的hook函数，能够知道当前执行的上下文信息，包含：</p>
 <ul>
@@ -47,7 +48,7 @@
 <li>现在这个hook函数，它调用的入参 和 上次存储的值是多少？</li>
 </ul>
 <h3>1.如何hook被哪个Component调用了？</h3>
-<p>受限于JS的语言特性，strict模式下的当前函数无法获取当前的caller是谁，参考：<span class="inner-link"href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Functions/arguments/callee">callee</span></p>
+<p>受限于JS的语言特性，strict模式下的当前函数无法获取当前的caller是谁，参考：<span class="inner-link"href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Functions/arguments/callee">callee</a></p>
 <p>所以一般情况下需要通过一点技巧来实现，即通过劫持函数执行前后的全局变量，维持一个调用栈</p>
 <p>这样在render函数在执行的时候，当前全局变量里最新的Component就是当前正在执行的Component</p>
 <p>为什么可以这么做？是因为JS是单线程执行模型，代码在执行是同步的在一个线程里共享内存变量，所以才能用这个“技巧”</p>
