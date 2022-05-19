@@ -11,7 +11,8 @@ react Hooks的实现作为前端经典八股文之一，之前已经大致了解
 - 为什么Dispatcher要分成 HooksDispatcherOnMount 和  HooksDispatcherOnUpdate 2类？
 - useState的计算的时机为什么是下次更新的时候才Merge ？
 
-以useReducer为例，hooks的源码出处：[ReactFiberHooks.new.js](https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactFiberHooks.new.js)
+以useReducer为例，hooks的源码出处：
+[ReactFiberHooks.new.js](https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactFiberHooks.new.js)
 
 ## 基本原理说明
 在Hooks实现里最重要的事情，就是useState和useEffect之类的hook函数，能够知道当前执行的上下文信息，包含：
@@ -21,7 +22,9 @@ react Hooks的实现作为前端经典八股文之一，之前已经大致了解
 
 
 ### 1.如何hook被哪个Component调用了？
-受限于JS的语言特性，strict模式下的当前函数无法获取当前的caller是谁，参考：[callee](https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Functions/arguments/callee)<br />所以一般情况下需要通过一点技巧来实现，即通过劫持函数执行前后的全局变量，维持一个调用栈
+受限于JS的语言特性，strict模式下的当前函数无法获取当前的caller是谁，参考：[callee](https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Functions/arguments/callee)
+
+所以一般情况下需要通过一点技巧来实现，即通过劫持函数执行前后的全局变量，维持一个调用栈
 
 这样在render函数在执行的时候，当前全局变量里最新的Component就是当前正在执行的Component
 
@@ -138,7 +141,9 @@ update的取数据对象的过程中：
    2. 同上的克隆过程
 3. 后面重复这个过程
 
-经过取hook对象的过程，也完成了旧Fiber到新Fiber的数据克隆过程，update的逻辑之所以复杂，是因为同时涉及取数据和克隆hook的过程<br />这么设计的原因，基于函数式的特点，所有的计算都是lazy的，React在内部的大部分编程代码里都遵循了这一个原则
+经过取hook对象的过程，也完成了旧Fiber到新Fiber的数据克隆过程，update的逻辑之所以复杂，是因为同时涉及取数据和克隆hook的过程
+
+这么设计的原因，基于函数式的特点，所有的计算都是lazy的，React在内部的大部分编程代码里都遵循了这一个原则
 
 ### 2.执行并计算hook
 计算hook也是一个lazy的过程，当setState的时候，对应React，这个只是触发更新的一个信号，此时并不会将setState的入参更新到Fiber.memoizedState里，
