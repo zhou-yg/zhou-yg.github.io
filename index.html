@@ -25,7 +25,203 @@
 
   <main>
 
-    <a class="a-link" href="#t13" name="t13" >
+    <a class="a-link" href="#t14" name="t14" >
+  <article>
+    <div class="markdown-body">
+      <h1>React Hooks的设计</h1>
+<p>2022-05-19</p>
+<h2>概览</h2>
+<p>出于设计useServerless的需要，最好能参考React源码的实现</p>
+<p>react Hooks的实现作为前端经典八股文之一，之前已经大致了解内部是基于循环链表的实现过程，但仔细回想后，发现虽然了解了它的原理（WHAT）还是有很多地方不明白为什么要这么写（WHY），比如</p>
+<ul>
+<li>为什么hook数据对象使用的是链表？数组可以吗？</li>
+<li>hook的queue跟hook数据的链表不一样，反而是环状链表？</li>
+<li>为什么Dispatcher要分成 HooksDispatcherOnMount 和  HooksDispatcherOnUpdate 2类？</li>
+<li>useState的计算的时机为什么是下次更新的时候才Merge ？</li>
+</ul>
+<p>以useReducer为例，hooks的源码出处：<span class="inner-link"href="https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactFiberHooks.new.js">ReactFiberHooks.new.js</span></p>
+<h2>基本原理说明</h2>
+<p>在Hooks实现里最重要的事情，就是useState和useEffect之类的hook函数，能够知道当前执行的上下文信息，包含：</p>
+<ul>
+<li>当前是哪个Component在调用这个hook函数</li>
+<li>现在这个hook函数，它调用的入参 和 上次存储的值是多少？</li>
+</ul>
+<h3>1.如何hook被哪个Component调用了？</h3>
+<p>受限于JS的语言特性，strict模式下的当前函数无法获取当前的caller是谁，参考：<span class="inner-link"href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Functions/arguments/callee">callee</a>&lt;br /&gt;所以一般情况下需要通过一点技巧来实现，即通过劫持函数执行前后的全局变量，维持一个调用栈</p>
+<p>这样在render函数在执行的时候，当前全局变量里最新的Component就是当前正在执行的Component</p>
+<p>为什么可以这么做？是因为JS是单线程执行模型，代码在执行是同步的在一个线程里共享内存变量，所以才能用这个“技巧”</p>
+<blockquote>
+<p>拓展思考：如果是多线程里，如何实现这个功能呢？</p>
+</blockquote>
+<pre><code class="language-javascript">let globalCurrent = []
+function run() {
+  pushGlobalCurrentStack(ReactComponent)
+  ReactComponent.render()
+  popGlobalCurrentStack()
+}
+</code></pre>
+<h3>2.获取上次的存储值</h3>
+<p>总所周知，React的hook的值是存储在Component对应的Fiber中，所以只有能找到Component就能找到Fiber</p>
+<p>在hooks有2个数据的来源，hooks初始设定的参数作为默认值，上一次的提交的action和上一次的值</p>
+<ul>
+<li>mount时
+<ul>
+<li>关心初始参数，保存到 hook的memoizedState 和 baseState</li>
+</ul>
+</li>
+<li>update
+<ul>
+<li>关心上次dispatch的action变更，和 hook的memoizedState，计算出新的值并保存</li>
+</ul>
+</li>
+</ul>
+<p>由于mount和update的完全不同，所以需要区别2者，React的判断方法是：通过Fiber</p>
+<pre><code class="language-javascript">// renderWithHooks current:Fiber
+ReactCurrentDispatcher.current =
+  current === null || current.memoizedState === null
+    ? HooksDispatcherOnMount
+    : HooksDispatcherOnUpdate;
+</code></pre>
+<h2>useReducer的数据结构</h2>
+<p>分成2步：</p>
+<ol>
+<li>获取当前的hook对应的数据对象，通过 mountWorkInProgressHook</li>
+<li>构建hook的返回 pair 结构 [state, setState]</li>
+</ol>
+<p>为什么useReducer每次都需要从Fiber中取数据，不能直接跟自己关联，2个原因：</p>
+<ol>
+<li>useReducer本身是全局引用，不能被污染。
+<ol>
+<li>除非在useReducer在Component进行实例化，在实例化的useReducer上挂数据，但受限于React的 Function Component的特性，这行不通。因为每次渲染的时候，Component作为一个Function会重新执行一次，执行的时候，函数body是从0开始执行的，useReducer每次都会被重新实例化</li>
+</ol>
+</li>
+<li>受限于语言特性，函数无法在function body内保存数据，useReducer只能将自己依赖的数据，保存到一个hook对象，并挂在当前Fiber里，用到的时候再取出。</li>
+</ol>
+<p>如果真不想的每次都从外部的Fiber中取数据，将数据内存在组件内部，就必须得做到2个方面：</p>
+<ul>
+<li>Component 初始化只执行一次，重新渲染的时候，函数不再重新执行那么就不会重新实例化</li>
+<li>Component 的render逻辑需要在第一次执行的时候就跟状态数据绑定“关系”，这样就即修改数据不用初始化，仅render 视图就可以了</li>
+</ul>
+<blockquote>
+<p>嗯没错，这就是Vue.setup的核心思想了，条条大路通罗马</p>
+</blockquote>
+<h3>1.获取当前hook数据对象</h3>
+<p>mount的逻辑相对简单，只需要做2件事情</p>
+<ol>
+<li>初始化最基本的数据结构接口</li>
+<li>将当前hooh对象 append 或 init 到全局</li>
+</ol>
+<p>hook对象的构建链表的过程：</p>
+<ol>
+<li>第一个 hook1
+<ol>
+<li>currentlyRenderingFiber.memoizedState = workInProgressHook（全局，此时为null） = hook1
+<ol>
+<li>currentlyRenderingFiber.memoizedState = hook1（这个Fiber下的hook起点始终指向hook1，这样才能通过遍历链表找到所有的hook数据对象</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>第二个 hook2
+<ol>
+<li>workInProgressHook = hook2， hook1.next = hook2</li>
+</ol>
+</li>
+<li>后面重复这个过程</li>
+</ol>
+<p>经过mount的初始化之后，此时我们就得到了一条hook数据构建的单链表：</p>
+<blockquote>
+<p>currentlyRenderingFiber.memoizedState（hook1)  -&gt; hook2 -&gt; hook3 ...</p>
+</blockquote>
+<p>update的逻辑会稍微复杂一点，并且已经它的逻辑是已经经过mount了，认为已经有一条hook的单链表的前提下</p>
+<p>在update里有2种hook对象，分别是：</p>
+<ul>
+<li>nextCurrentHook
+<ul>
+<li>初始化时来自于 currentlyRenderingFiber.alternate.memoizedState</li>
+<li>此时正在更新中，currentlyRenderingFiber是当前workInProcess，是新Fiber，它的alternate指向的是旧FIber</li>
+</ul>
+</li>
+<li>nextWorkInProgressHook
+<ul>
+<li>表示当前正在执行的hook数据对象，即新Fiber的hook数据对象
+<ul>
+<li>如果第一个hook（nextWorkInProgressHook == null时）则来自于  currentlyRenderingFiber.memoizedState，指向的是新Fiber的链表的头部</li>
+<li>否则来自于 workInProgressHook.next （即上一个hook数据对象的next)
+<ul>
+<li>新FIber的hook链表</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>对alternate的补充说明：update的逻辑点正是在于 alternate的差别，了解React源码会知道React在更新的时候会有一个“2棵树”逻辑，基于待更新的Fiber，构建一个新的Fiber链表，新的iew会使用新的Fiber链渲染，并替换旧FIber，它们之间通过alernate关联，所以 fiber.alternate 可以理解为最新的fiber节点</p>
+<blockquote>
+<p>oldFiber.alternate === newFiber
+newFiber.alternate === OldFiber</p>
+</blockquote>
+<p>在useReducer的update逻辑，在第一个hook执行会有一个迷惑点，即</p>
+<ul>
+<li>nextCurrentHook来自于旧Fiber， currentlyRenderingFiber.alternate.memoizedState</li>
+<li>nextWorkInProgressHook来自于新Fiber</li>
+</ul>
+<p>React在这里主要是行为将旧Fiber的hook数据对象，复制到新Fiber的hook数据对象中，下面展示的是clone hook的过</p>
+<p>update的取数据对象的过程中：</p>
+<ol>
+<li>第一个 hook1
+<ol>
+<li>分别取出新旧Fiber的hook链表的第1个
+<ol>
+<li>old-hook1： 此时currentHook不存在，所以得从旧Fiber中先取出第1个 currentlyRenderingFiber.alternate.memoizedState，并设置到全局作为currentHook</li>
+<li>new-hook1：nextWorkInProgressHook也不存在，从新Fiber的currentlyRenderingFiber.memoizedState取出作为第1个</li>
+</ol>
+</li>
+<li>将旧Fiber的hook链表头clone到新Fiber
+<ol>
+<li>currentlyRenderingFiber.memoizedState = 从旧Fiber上克隆的 old-hook1</li>
+<li>此时 workInProgressHook 就是执行新Fiber的hook链的头部，即new-hook1，同时把new-hook设置到全局workInProgressHook，作为下一个turn的启动点</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>第二个 hook2
+<ol>
+<li>还是分别取出新旧Fiber的hook链表的第2个hook数据对象
+<ol>
+<li>由于此时全局的currentHook已经存在（指向的是old-hook1），直接使用currentHook.next</li>
+<li>workInProgressHook已经存在（指向的是new-hook2），直接使用workInProgressHook.next</li>
+</ol>
+</li>
+<li>同上的克隆过程</li>
+</ol>
+</li>
+<li>后面重复这个过程</li>
+</ol>
+<p>经过取hook对象的过程，也完成了旧Fiber到新Fiber的数据克隆过程，update的逻辑之所以复杂，是因为同时涉及取数据和克隆hook的过程&lt;br /&gt;这么设计的原因，基于函数式的特点，所有的计算都是lazy的，React在内部的大部分编程代码里都遵循了这一个原则</p>
+<h3>2.执行并计算hook</h3>
+<p>计算hook也是一个lazy的过程，当setState的时候，对应React，这个只是触发更新的一个信号，此时并不会将setState的入参更新到Fiber.memoizedState里，</p>
+<p>计算hook的有1个特点：会进行优先级判断，并且在判断后会进行会将剩余的低优先级action保存到hook中，等待下次的渲染，同时要保存的时候要维持之前action queue的顺序，</p>
+<p>而queue用到的数据结构化是环状链表，queue.pending始终指向最后一个插入的update，即链表的尾部</p>
+<blockquote>
+<p>queue.pending = upadete3 &lt;-- update2 &lt;-- update1 （ = update3.next）</p>
+</blockquote>
+<p>用了“环”之后，它的巧妙之处在于就可以</p>
+<ul>
+<li>当有新的update插入时，可以直接插入到链表的末尾</li>
+<li>当在useReducer需要进行更新的时候，要按顺序进行遍历的时候，只要访问 queue.pending.next（因为是环状的，所以尾部的next就是头部）就可以立刻从头部开始</li>
+</ul>
+<p>这种实现在JS里在，用数组当然也能实现，主要还是因为JS的数组非常“强大”。但使用“环状链表”确实非常的酷炫，另外一个可能的好处是queue.pending保存最后一个updaet就行，</p>
+<p>遍历完update的之后后面就是简单的 newState = reducer(state, action)这一套，同样是遵循lazy的设计。</p>
+
+    </div>
+  
+    <div class="mark">Y</div>
+
+  </article>
+</a>
+<a class="a-link" href="#t13" name="t13" >
   <article>
     <div class="markdown-body">
       <h1>Why serverless</h1>
