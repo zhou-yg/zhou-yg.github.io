@@ -48,7 +48,7 @@
 <li>现在这个hook函数，它调用的入参 和 上次存储的值是多少？</li>
 </ul>
 <h3>1.如何hook被哪个Component调用了？</h3>
-<p>受限于JS的语言特性，strict模式下的当前函数无法获取当前的caller是谁，参考：<span class="inner-link" href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Functions/arguments/callee">callee</a></p>
+<p>受限于JS的语言特性，strict模式下的当前函数无法获取当前的caller是谁，参考：<span class="inner-link" href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Functions/arguments/callee">callee</span></p>
 <p>所以一般情况下需要通过一点技巧来实现，即通过劫持函数执行前后的全局变量，维持一个调用栈</p>
 <p>这样在render函数在执行的时候，当前全局变量里最新的Component就是当前正在执行的Component</p>
 <p>为什么可以这么做？是因为JS是单线程执行模型，代码在执行是同步的在一个线程里共享内存变量，所以才能用这个“技巧”</p>
@@ -485,11 +485,11 @@ function serverlessUnit () {
 <p>代码仓库：
 <span class="inner-link" href="https://chromium.googlesource.com/chromium/src.git/">https://chromium.googlesource.com/chromium/src.git/</span></p>
 <p>代码阅读器：
-<span class="inner-link" href="https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/clipboard/;bpv=0;bpt=0">https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/clipboard/;bpv=0;bpt=0</a></p>
+<span class="inner-link" href="https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/clipboard/;bpv=0;bpt=0">https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/clipboard/;bpv=0;bpt=0</span></p>
 <p>需要学一点C++才能看得清楚明白</p>
 <h2>目录结构</h2>
 <ol>
-<li><span class="inner-link" href="https://chromium.googlesource.com/chromium/src.git/+/refs/heads/main/third_party/">third_party/</a> 第三方
+<li><span class="inner-link" href="https://chromium.googlesource.com/chromium/src.git/+/refs/heads/main/third_party/">third_party/</span> 第三方
 <ol>
 <li>blink/ 排版渲染引擎（之前是webkit）</li>
 </ol>
@@ -498,7 +498,7 @@ function serverlessUnit () {
 </ol>
 <p>v8是js的runtime，但是在浏览器有很多的API，如DOM，fetch等其实并不在v8里面，这些代码大部分在blink里</p>
 <p>如 navigator.clipboard相关方法就在</p>
-<p><span class="inner-link" href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/modules/clipboard/clipboard_promise.h">https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/modules/clipboard/clipboard_promise.h</a></p>
+<p><span class="inner-link" href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/modules/clipboard/clipboard_promise.h">https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/modules/clipboard/clipboard_promise.h</span></p>
 <h2>阅读姿势</h2>
 <ul>
 <li>了解整体的生命周期
