@@ -12,7 +12,6 @@ react Hooks的实现作为前端经典八股文之一，之前已经大致了解
 - useState的计算的时机为什么是下次更新的时候才Merge ？
 
 以useReducer为例，hooks的源码出处：
-[ReactFiberHooks.new.js](https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactFiberHooks.new.js)
 
 ## 基本原理说明
 在Hooks实现里最重要的事情，就是useState和useEffect之类的hook函数，能够知道当前执行的上下文信息，包含：

@@ -39,7 +39,7 @@
 <li>为什么Dispatcher要分成 HooksDispatcherOnMount 和  HooksDispatcherOnUpdate 2类？</li>
 <li>useState的计算的时机为什么是下次更新的时候才Merge ？</li>
 </ul>
-<p>以useReducer为例，hooks的源码出处：<span class="inner-link"href="https://github.com/facebook/react/blob/main/packages/react-reconciler/src/ReactFiberHooks.new.js">ReactFiberHooks.new.js</span></p>
+<p>以useReducer为例，hooks的源码出处：</p>
 <h2>基本原理说明</h2>
 <p>在Hooks实现里最重要的事情，就是useState和useEffect之类的hook函数，能够知道当前执行的上下文信息，包含：</p>
 <ul>
@@ -47,7 +47,8 @@
 <li>现在这个hook函数，它调用的入参 和 上次存储的值是多少？</li>
 </ul>
 <h3>1.如何hook被哪个Component调用了？</h3>
-<p>受限于JS的语言特性，strict模式下的当前函数无法获取当前的caller是谁，参考：<span class="inner-link"href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Functions/arguments/callee">callee</a>&lt;br /&gt;所以一般情况下需要通过一点技巧来实现，即通过劫持函数执行前后的全局变量，维持一个调用栈</p>
+<p>受限于JS的语言特性，strict模式下的当前函数无法获取当前的caller是谁，参考：<span class="inner-link"href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript/Reference/Functions/arguments/callee">callee</span></p>
+<p>所以一般情况下需要通过一点技巧来实现，即通过劫持函数执行前后的全局变量，维持一个调用栈</p>
 <p>这样在render函数在执行的时候，当前全局变量里最新的Component就是当前正在执行的Component</p>
 <p>为什么可以这么做？是因为JS是单线程执行模型，代码在执行是同步的在一个线程里共享内存变量，所以才能用这个“技巧”</p>
 <blockquote>
@@ -199,7 +200,8 @@ newFiber.alternate === OldFiber</p>
 </li>
 <li>后面重复这个过程</li>
 </ol>
-<p>经过取hook对象的过程，也完成了旧Fiber到新Fiber的数据克隆过程，update的逻辑之所以复杂，是因为同时涉及取数据和克隆hook的过程&lt;br /&gt;这么设计的原因，基于函数式的特点，所有的计算都是lazy的，React在内部的大部分编程代码里都遵循了这一个原则</p>
+<p>经过取hook对象的过程，也完成了旧Fiber到新Fiber的数据克隆过程，update的逻辑之所以复杂，是因为同时涉及取数据和克隆hook的过程</p>
+<p>这么设计的原因，基于函数式的特点，所有的计算都是lazy的，React在内部的大部分编程代码里都遵循了这一个原则</p>
 <h3>2.执行并计算hook</h3>
 <p>计算hook也是一个lazy的过程，当setState的时候，对应React，这个只是触发更新的一个信号，此时并不会将setState的入参更新到Fiber.memoizedState里，</p>
 <p>计算hook的有1个特点：会进行优先级判断，并且在判断后会进行会将剩余的低优先级action保存到hook中，等待下次的渲染，同时要保存的时候要维持之前action queue的顺序，</p>
