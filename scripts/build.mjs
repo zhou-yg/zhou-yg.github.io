@@ -79,7 +79,7 @@ dirs.forEach(root => {
     }
   }
   const final = arr.reverse().concat(arrWithoutIndex).filter(Boolean).map(v => {
-    const final2 = v.html.replace(/<a /g, '<span class="inner-link" ').replace(/a>/, 'span>')
+    const final2 = v.html.replace(/<a /g, '<span class="inner-link" ').replace(/a>/g, 'span>')
 
     return ejs.render(mdTemp, {
       md: final2,
