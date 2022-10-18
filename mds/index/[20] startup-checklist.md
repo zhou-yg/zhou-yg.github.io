@@ -1,4 +1,4 @@
-#【译】startup-checklist
+# 【译】startup-checklist
 2022-09-30
 
 > 原文：[https://www.defmacro.org/2019/03/26/startup-checklist.html](https://www.defmacro.org/2019/03/26/startup-checklist.html)
