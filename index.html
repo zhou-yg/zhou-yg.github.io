@@ -42,9 +42,14 @@
       <h1>设计下一代组件库</h1>
 <p>2022-10-19</p>
 <h2>概述</h2>
-<p>在m2v的背景下，逻辑和视图已经进行了客观上的分层：
-层次结构从低到高：数据逻辑  &gt; 视觉逻辑 &gt; 视图结构 &gt; 视图样式
-在这个分层的基础上，复用一个组件时可以不是简单的  import jsx 并传递 props即可，在复用时，可以表达出更“精确”的复用意图，从而实现最极致的代码复用率</p>
+<p>在M2V的背景下，逻辑和视图已经进行了客观上的分层：</p>
+<blockquote>
+<p>M2V (model to view推导系统), 基于特定的范式特征从而推导出视图中的核心元素</p>
+</blockquote>
+<blockquote>
+<p>M2V中，前端的代码层次结构被划分成：数据逻辑  &gt; 视觉逻辑 &gt; 视图结构 &gt; 视图样式（从低到高）</p>
+</blockquote>
+<p>在这个分层的基础上，复用一个组件时可以不是简单的  import jsx 并传递 props即可，在复用时，可以表达出更“精确”的复用意图，从而实现最极致的代码复用率</p>
 <p>示例</p>
 <p><img src="./images/22-1.png" alt="示例1"></p>
 <p>https://ant.design/components/input-cn/
@@ -53,7 +58,7 @@ antd 的 search-input ，一个非常常用的组件。它是组合了 Input 和
 <p>这种写死的就会容易导致抽象不足，除非改代码否则就无法适应下面的使用场景</p>
 <p><img src="./images/22-3.png" alt="源码示例"></p>
 <p>要维持通用性，要么就需要新增props，要么hack样式，要么就用户自己基于Input和Button重新封装一下（复制也可以）调换一下数组元素的顺序，总之现行框架里实现的方法也有很多。</p>
-<p>对比一下m2v的组合方式</p>
+<p>对比一下M2V的组合方式</p>
 <h2>组合</h2>
 <p>2个基础组件简述
 input 组件</p>
@@ -93,7 +98,7 @@ import { submit } from 'button.model'
 </code></pre>
 <p>input原本有一个展示输入长度的功能，但是在写 search组件并没有引入“textLength&quot; 必须的状态，所以这个feature 就被丢弃了。</p>
 <h3>2.视图相关</h3>
-<p>在确定了逻辑的组合之后，视图结构也就随之确定，通过m2v自动推导出一个新的结构
+<p>在确定了逻辑的组合之后，视图结构也就随之确定，通过M2V自动推导出一个新的结构
 推导结果汇总不包含 input#textLength的直接关联的dom</p>
 <pre><code class="language-javascript"> // search.react.ts
 &lt;div&gt;
@@ -105,7 +110,7 @@ import { submit } from 'button.model'
 </code></pre>
 <p>注意，推导的新结构只是简单的排列，没法将button放置到”正确“的位置，需要开发者手动调整到具体位置</p>
 <h2>复用</h2>
-<p>通过上面的组合流程，现在已经有了一个InputSearch组件，现在开发者需要将其引入到自己的工程中，然后m2v又会生成新的HTML结构</p>
+<p>通过上面的组合流程，现在已经有了一个InputSearch组件，现在开发者需要将其引入到自己的工程中，然后M2V又会生成新的HTML结构</p>
 <pre><code class="language-javascript">// page.mode.ts
 import * as Search from 'search.model'
 
@@ -158,13 +163,13 @@ import * as Search from 'search.model'
 </blockquote>
 <h2>问题</h2>
 <ul>
-<li>q：通过m2v复用跟直接复制组件有什么区别？
+<li>q：通过M2V复用跟直接复制组件有什么区别？
 <ul>
-<li>a：m2v只复制了视图（逻辑）结构这层，最底层的数据逻辑还是通过引用的形式，确保底层是稳固的，依然能referrence from 原始库，不会像复制整个组件库那样出现脱节。</li>
+<li>a：M2V只复制了视图（逻辑）结构这层，最底层的数据逻辑还是通过引用的形式，确保底层是稳固的，依然能referrence from 原始库，不会像复制整个组件库那样出现脱节。</li>
 <li>简单的说，数据逻辑层是组件化的，视图相关的是模板化的。需要考虑复用和演进的组件化，定制修改多的模板化。概念引用：https://www.zhihu.com/question/305406422</li>
 </ul>
 </li>
-<li>q：使用自己的人是否必须强绑定m2v
+<li>q：使用自己的人是否必须强绑定M2V
 <ul>
 <li>a：可以降级成为普通组件库引入来使用，体验跟antd一致，如果想要高级功能需要接入这套体系</li>
 </ul>
