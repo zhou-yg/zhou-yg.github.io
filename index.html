@@ -47,7 +47,7 @@
 <p>M2V (model to view推导系统), 基于特定的范式特征从而推导出视图中的核心元素</p>
 </blockquote>
 <blockquote>
-<p>M2V中，前端的代码层次结构被划分成：数据逻辑  &gt; 视觉逻辑 &gt; 视图结构 &gt; 视图样式（从低到高）</p>
+<p>M2V中，前端部分的代码层次结构被划分成：数据逻辑  &gt; 视觉逻辑 &gt; 视图结构 &gt; 视图样式（从低到高）</p>
 </blockquote>
 <p>在这个分层的基础上，复用一个组件时可以不是简单的  import jsx 并传递 props即可，在复用时，可以表达出更“精确”的复用意图，从而实现最极致的代码复用率</p>
 <p>示例</p>
@@ -166,7 +166,7 @@ import * as Search from 'search.model'
 <li>q：通过M2V复用跟直接复制组件有什么区别？
 <ul>
 <li>a：M2V只复制了视图（逻辑）结构这层，最底层的数据逻辑还是通过引用的形式，确保底层是稳固的，依然能referrence from 原始库，不会像复制整个组件库那样出现脱节。</li>
-<li>简单的说，数据逻辑层是组件化的，视图相关的是模板化的。需要考虑复用和演进的组件化，定制修改多的模板化。概念引用：https://www.zhihu.com/question/305406422</li>
+<li>简单的说，数据逻辑层是组件化的，视图相关的是模板化的。需要考虑复用和演进的组件化，定制修改多的模板化。概念引用：<span class="inner-link" href="https://www.zhihu.com/question/305406422">https://www.zhihu.com/question/305406422</span></li>
 </ul>
 </li>
 <li>q：使用自己的人是否必须强绑定M2V
