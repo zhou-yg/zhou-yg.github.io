@@ -36,7 +36,146 @@
 
   <main>
 
-    <a class="a-link" href="#t24" name="t24" >
+    <a class="a-link" href="#t25" name="t25" >
+  <article>
+    <div class="markdown-body">
+      <h1>设计面向未来的组件库</h1>
+<p>2022-01-16</p>
+<h2>前言</h2>
+<p>在我不长的职业经历中，经历了多种多样的业务场景，涉及多种技术栈和框架</p>
+<ul>
+<li>B端前台和中后台，BI平台</li>
+<li>C端小程序，H5 和 运营工具</li>
+<li>通用技术基建，低代码，页面搭建</li>
+</ul>
+<p>在以上的业务场景里，我意识到一个问题：一个小程序 Button，中后台 Button，H5 Button 它们并没有什么本质的不同，最多换个皮即可，但在现实中它们却完全来自于3个不同的组件库。</p>
+<p>这问题困扰着我的，但似乎一直没有解决方案，即时是近来诞生的新组件库似乎还是在原地打转，没有新的突破，是太难还是根本无解 ？</p>
+<p>最后的契机是在《web需求结构化》的探索中，逐渐发现也许是有解的，决定开始探索实践这样一个 web研发体系，并产出一个可用的组件库</p>
+<p>组件库在前端工程架构中属于偏底层的位置（图），通过讨论组件库可以更好的说清楚问题，展示解决思路的推演过程，最终到达预期的目标。</p>
+<h2>重复造轮子</h2>
+<p>现在的开源组件库，中后台的各种design，移动端的各种mobile，小程序的各种mini，已经多如牛毛，为什么还得再造一个轮子呢？</p>
+<p>首先上述的开源库很明显的是有自身的一些局限性：</p>
+<ul>
+<li>问题域太小，不适用于更大更通用的应用场景</li>
+<li>代码是超高内聚的，用户只能通过props 和 slot进行有限的配置，无法进行二次拓展。</li>
+</ul>
+<p>由于上述的原因，这些库通常也不跨端和框架。</p>
+<p>除此之外，业界还有另外一波更下沉的探索，比如各类headless库, hooks库</p>
+<ul>
+<li><span class="inner-link" href="https://www.radix-ui.com/">Radix UI</span></li>
+<li><span class="inner-link" href="https://reach.tech/">Reach UI</span></li>
+<li><span class="inner-link" href="https://headlessui.dev/">Headless UI</span></li>
+<li><span class="inner-link" href="https://github.com/downshift-js/downshift">Downshift</span></li>
+<li><span class="inner-link" href="https://react-spectrum.adobe.com/react-aria/">React-aria</span></li>
+</ul>
+<p>总结他们的共同特点是都只做最基本的事情，包含：</p>
+<ul>
+<li>布局结构</li>
+<li>状态逻辑</li>
+</ul>
+<p>大家都认为一个组件库至少要包含上述元素，将其它的部分交给用户拓展，但这样的问题是：</p>
+<ul>
+<li>布局结构和状态逻辑依然是不可拓展的
+<ul>
+<li>可拓展的部分限制在结构和状态逻辑之外</li>
+</ul>
+</li>
+<li>用户按自己习惯开发出的组件依然是一个黑盒组件，后续依然是不可拓展的</li>
+</ul>
+<p>说明类headless方案只减少了一层抽象，并且依然未提供一个有效的研发指导，让人能开发出一个具备高拓展的组件</p>
+<h2>最好的组件库</h2>
+<p>由于应用场景各有不同，没有统一的衡量标准，所以只有最合适的，没有最好的。</p>
+<p>如果能提供一个组件库，能满足基础需求，并提供足够的定制拓展能力，经过用户二次开发之后，理论上这是一个称得上是最好的组件库</p>
+<p>所以一个最好的组件库应该具备2个特点：</p>
+<ul>
+<li>能提供满足基本需求的原子组件</li>
+<li>体系化的拓展能力
+<ul>
+<li>能够组合出新组件</li>
+<li>能充分覆写原子组件</li>
+<li>产生的新组件依然具备同样的拓展能力</li>
+</ul>
+</li>
+</ul>
+<h2>思路</h2>
+<p>重点是不再是黑盒，能够让用户在编辑态或运行态就能获取到组件内的组成成分，那么整体的组件编写风格就会偏向声明式范式，同时也要为这种范式，提供统一的覆写规则。</p>
+<p>首先是要突破现有组件架构的黑盒，让组件开发者能够在编译时或运行时获取到组件的内部信息。</p>
+<p>现状的函数组件的问题，以React为例：</p>
+<pre><code class="language-typescript">// JSX
+function MyComponent () {
+  const [state] = useState('')
+  return &lt;div id={state} &gt;&lt;/div&gt; // React.createElement('div')
+}
+</code></pre>
+<p>在不改变现有代码的情况下，</p>
+<ul>
+<li>受限于编程语言，无法获取到函数内的局部变量的引用 （指针）</li>
+<li>受限于React，只能拿到经过构建的 React.Element 顶部接节点，无法获取原始的meta信息</li>
+</ul>
+<p>为了避开框架和语言的限制，所以要稍微的调整下组件代码组织方式</p>
+<p>整体思路是借鉴IOC，开发者只负责各个层的定义，将组件的逻辑流程交给runtime控制，再通过runtime拼装成完整的组件</p>
+<p>所以整个实施思路就是：</p>
+<ul>
+<li>组件库要做的
+<ul>
+<li>抽象一个runtime，负责控制组件的整个流程</li>
+<li>按照视图 / 逻辑 / 样式 为主的抽象进行分层
+<ul>
+<li>组件包含拓展的逻辑，再加一个 “拓展层”</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>用户要做的
+<ul>
+<li>就尽可能“定义”每层抽象的代码</li>
+</ul>
+</li>
+</ul>
+<p>demo示例：</p>
+<pre><code class="language-typescript">function logic () {
+  const [state] = useState('')
+  return { state } 
+}
+
+function view () {
+  const { state } = useLogic(); 
+
+  // 用JSON 描述视图结构的原子信息，不再是 React.createElement
+  return {
+    type: 'div',
+    id: state,
+    children: []
+  } 
+}
+
+// 拆分后，在通过工厂函数拼装成一个函数组件
+const MyComponent = createRuntime(logic).with(view)
+</code></pre>
+<p>进一步的，在有了中间抽象之后，剩下的拓展思路就比较清晰了，就是在runtime的内部对每个分层都提供对应的override函数</p>
+<p>整体流程如下：</p>
+<p><img src="/images/25-1.png" alt="image.png"></p>
+<p>其中关于对 视图层的分层和拓展，可以参考前面2个视图文章</p>
+<h3>1.关于逻辑</h3>
+<p>相比HTML（JSX）在view层的统治力，逻辑的表达是非常多样化的。在现代图灵机抽象上，编程中的逻辑只围绕2个点：</p>
+<ul>
+<li>数据</li>
+<li>指令</li>
+</ul>
+<p>编程语言的发展历史里已经总结了了非常多的编程范式，规范来更好的解决这些逻辑问题。</p>
+<p>站在前人的肩膀上，我们无需自己凭空创造，只需要从历史里逐个找到“最适合”拓展的范式即可。这块值得详细展开，下个文章见</p>
+<h2>写在最后</h2>
+<p>本文主要提供一个启发思路，更好的范式和组件架构我也在持续探索和完善中。截止目前，通过上面的思路已经实现了一些基础组件的demo，</p>
+<p>如果你觉得有用，欢迎点个 start 和交流</p>
+<p>polymita（DEMO版）： <span class="inner-link" href="https://github.com/zhou-yg/polymita">https://github.com/zhou-yg/polymita</span></p>
+
+    </div>
+  
+    <div class="mark">Y</div>
+
+  </article>
+</a>
+<a class="a-link" href="#t24" name="t24" >
   <article>
     <div class="markdown-body">
       <h1>可定制视图组件</h1>
