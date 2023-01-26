@@ -7,7 +7,7 @@ a[name="t24"] img{
 body {
   margin: 0;
   padding: 0;
-  background-color: #f5f5f5;
+  background-color: var(--color-canvas-subtle);
 }
 
 .inner-link {
@@ -75,7 +75,7 @@ main {
 }
 
 article {
-  background-color: #fff;
+  background-color: var(--color-canvas-default);
   padding: 30px 44px 40px;
   color: #262626;
   margin: 0 0 45px;
@@ -97,7 +97,7 @@ article img {
 /* markdown github */
 
 @media (prefers-color-scheme: dark) {
-  .markdown-body {
+  :root {
     color-scheme: dark;
     --color-prettylights-syntax-comment: #8b949e;
     --color-prettylights-syntax-constant: #79c0ff;
@@ -145,7 +145,7 @@ article img {
 }
 
 @media (prefers-color-scheme: light) {
-  .markdown-body {
+  :root {
     color-scheme: light;
     --color-prettylights-syntax-comment: #6e7781;
     --color-prettylights-syntax-constant: #0550ae;
