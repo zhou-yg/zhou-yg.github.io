@@ -12,8 +12,8 @@ github: [https://github.com/zhou-yg](https://github.com/zhou-yg)
 会分为3个关键部分：
 
 - 我对什么兴趣
-- 我会什么，提升什么
-- 不会什么
+- 我会什么
+- 不会什么，但会提升的
 
 ## 一、我对什么感兴趣
 
@@ -62,7 +62,7 @@ github: [https://github.com/zhou-yg](https://github.com/zhou-yg)
 
 低代码的核心在于DSL和可视化，
 
-## 三、我不擅长的但感兴趣的
+## 三、不会的
 
 过去做过简单尝试但是没有深入的
 
